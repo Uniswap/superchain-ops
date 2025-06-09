@@ -76,7 +76,8 @@ You will see a "Simulation link" from the output.
 Paste this URL in your browser. A prompt may ask you to choose a
 project, any project will do. You can create one if necessary.
 
-Click "Simulate Transaction".
+Click "Simulate Transaction". Please note that in some cases, when the calldata is very large, you may have to complete an additional step. 
+This involves copying and pasting the 'Raw Input data' field from the terminal into the Raw input data field in the Tenderly simulation, then clicking "Simulate Transaction".
 
 We will be performing 3 validations and extract the domain hash and
 message hash to approve on your Ledger:
@@ -108,7 +109,7 @@ Now that we have verified the transaction performs the right
 operation, we need to extract the domain hash and the message hash to
 approve.
 
-Go back to the "Overview" tab, and find the
+Go back to the "Overview" tab, and find the **first**
 `GnosisSafe.checkSignatures` call. This call's `data` parameter
 contains both the domain hash and the message hash that will show up
 in your Ledger.
@@ -120,6 +121,10 @@ different:
 
 It will be a concatenation of `0x1901`, the domain hash, and the
 message hash: `0x1901[domain hash][message hash]`.
+
+Sometimes Tenderly can be buggy and may not show this function call in the simulator trace.
+If that happens, try refreshing the simulation link. If it still doesn’t show up, please contact the ceremony facilitator.
+Make sure not to confuse this function call with the second `GnosisSafe.checkSignatures` call.
 
 Note down this value. You will need to compare it with the ones
 displayed on the Ledger screen at signing.
