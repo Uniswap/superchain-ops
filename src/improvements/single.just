@@ -58,7 +58,9 @@ simulate hdPath='0':
   fi
 
   echo "⏳ Task simulation in progress. Some tasks take longer than others..."
+  echo "forge build"
   forge build
+  echo "forge script ${script}"
   forge script ${script} \
     ${fork_block_arg} \
     --rpc-url ${rpcUrl} \
@@ -67,6 +69,7 @@ simulate hdPath='0':
 
 sign hdPath='0' ledger='true':
   #!/usr/bin/env bash
+  echo "Attempting sign..."
   config=${TASK_PATH}/config.toml
   script=${SCRIPT_PATH}/template/${SCRIPT_NAME}.sol
   echo "script name: ${SCRIPT_NAME}"

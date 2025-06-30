@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.15;
 
+import {console} from "forge-std/console.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {StdChains} from "forge-std/StdChains.sol";
 import {stdToml} from "forge-std/StdToml.sol";
 import {GameTypes, GameType} from "@eth-optimism-bedrock/src/dispute/lib/Types.sol";
+import {LibString} from "@solady/utils/LibString.sol";
 
 /// @notice Contains getters for arbitrary methods from all L1 contracts, including legacy getters
 /// that have since been deprecated.
@@ -77,6 +79,9 @@ contract SuperchainAddressRegistry is StdChains {
     /// @notice The path to the addresses.json file in the superchain-registry repo.
     string public constant SUPERCHAIN_REGISTRY_ADDRESSES_PATH =
         "lib/superchain-registry/superchain/extra/addresses/addresses.json";
+    
+    string public constant UNI_ALPHANET_ADDRESSES_PATH =
+        "src/improvements/tasks/sep/016-U16-opcm-upgrade-v400-uni-alphanet/addresses.json";
 
     /// @notice Initializes the contract by loading addresses from TOML files
     /// and configuring the supported L2 chains.
@@ -106,7 +111,11 @@ contract SuperchainAddressRegistry is StdChains {
         }
 
         // For each OP chain, read in all addresses for that OP Chain.
-        string memory chainAddrs = vm.readFile(SUPERCHAIN_REGISTRY_ADDRESSES_PATH);
+        string memory addressesPath = SUPERCHAIN_REGISTRY_ADDRESSES_PATH;
+        if (LibString.contains(configPath, "uni-alphanet")) {
+            addressesPath = UNI_ALPHANET_ADDRESSES_PATH;
+        }
+        string memory chainAddrs = vm.readFile(addressesPath);
 
         for (uint256 i = 0; i < chains.length; i++) {
             _processAddresses(chains[i], chainAddrs);

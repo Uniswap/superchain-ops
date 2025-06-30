@@ -288,7 +288,7 @@ abstract contract MultisigTask is Test, Script, StateOverrideManager, TaskManage
     }
 
     /// @notice Get the safe address string from the config file. If the string is not found, use the value from the template.
-    function loadSafeAddressString(MultisigTask task, string memory taskConfigFilePath)
+    function loadSafeAddressString(string memory safeAddressString, string memory taskConfigFilePath)
         public
         view
         returns (string memory)
@@ -302,7 +302,7 @@ abstract contract MultisigTask is Test, Script, StateOverrideManager, TaskManage
             );
             return _safeAddressString;
         } catch (bytes memory) {
-            return task.safeAddressString();
+            return safeAddressString;
         }
     }
 
@@ -678,7 +678,7 @@ abstract contract MultisigTask is Test, Script, StateOverrideManager, TaskManage
         returns (address[] memory allSafes_)
     {
         require(parentMultisig == address(0), "MultisigTask: already initialized");
-        templateConfig.safeAddressString = loadSafeAddressString(MultisigTask(address(this)), _taskConfigFilePath);
+        templateConfig.safeAddressString = loadSafeAddressString(safeAddressString(), _taskConfigFilePath);
         IGnosisSafe _parentMultisig; // TODO parentMultisig should be of type IGnosisSafe
         (addrRegistry, _parentMultisig, multicallTarget) = _configureTask(_taskConfigFilePath);
 

@@ -7,18 +7,20 @@ the values printed to the terminal when you run the task.
 >
 > Before signing, ensure the below hashes match what is on your ledger.
 >
-> ### Nested Safe 1 (L1ProxyAdminOwner): `0xd363339eE47775888Df411A163c586a8BdEA9dbf` - This safe is not nested.
+> ### Nested Safe 1 (L1ProxyAdminOwner): `0xf66d0913Ee7f8518841Ae913853301Dd29b82298` - This safe is not nested.
 >
-> - Domain Hash: `0x2fedecce87979400ff00d5cec4c77da942d43ab3b9db4a5ffc51bb2ef498f30b`
-> - Message Hash: `0xae6d9637055732e9bd9fd79d6874d616171381a3eea0516e15165a3fefee1a60` 
+> - Domain Hash: `0x3fe636801465d1c181289f70f03d57edc6aa3fa94e8dd619705c296e2f7ad372`
+> - Message Hash: `0xdd54e9bd6b4fd6a6dc45c94e5a01e8e5343fd7e3a0e98f243939ae61bf32fd59` 
+
 
 0x1901
-2fedecce87979400ff00d5cec4c77da942d43ab3b9db4a5ffc51bb2ef498f30b
-ae6d9637055732e9bd9fd79d6874d616171381a3eea0516e15165a3fefee1a60
+3fe636801465d1c181289f70f03d57edc6aa3fa94e8dd619705c296e2f7ad372
+0xdd54e9bd6b4fd6a6dc45c94e5a01e8e5343fd7e3a0e98f243939ae61bf32fd59
+
 
 ## Normalized State Diff Hash Attestation
 
 The normalized state diff hash MUST match the hash created by the state changes attested to in the state diff audit report.
 As a signer, you are responsible for making sure this hash is correct. Please compare the hash below with the hash in the audit report.
 
-**Normalized hash:** `0x7c4f49c86766549f938fd0850aa4bf0ca4300116c0b4a6a154e4856147da754c`
+**Normalized hash:** `0xab23635c600a578e08ed092d78b3e877d2b361c76ff3b2e3522e8da46d1057ea`
