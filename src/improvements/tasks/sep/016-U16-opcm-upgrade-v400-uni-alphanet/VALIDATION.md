@@ -24,3 +24,8 @@ The normalized state diff hash MUST match the hash created by the state changes 
 As a signer, you are responsible for making sure this hash is correct. Please compare the hash below with the hash in the audit report.
 
 **Normalized hash:** `0xab23635c600a578e08ed092d78b3e877d2b361c76ff3b2e3522e8da46d1057ea`
+
+charles signature: fab714d3d736146833ccc7b28360fc90bd8710b21ac20c5ed456221bacc02dee6f7f8e9d0c58995f92550f979b5b0b5518e9199b12bfef1e4748ccc171763acd1b
+
+melville signature:
+cff40f96ef312bd68e25868a2308633fffb8d62eb0101a5c83bee7c326d03cb678d4a50233fb6ebdf05a7a185e19c3ed205e8dda3135f4fdf19aa230f4b881c41b

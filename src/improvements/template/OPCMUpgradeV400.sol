@@ -15,7 +15,7 @@ import {LibString} from "solady/utils/LibString.sol";
 import {OPCMTaskBase} from "src/improvements/tasks/types/OPCMTaskBase.sol";
 import {SuperchainAddressRegistry} from "src/improvements/SuperchainAddressRegistry.sol";
 import {Action} from "src/libraries/MultisigTypes.sol";
-
+import {console} from "forge-std/console.sol";
 /// @notice A template contract for configuring OPCMTaskBase templates.
 /// Supports: op-contracts/v4.0.0-rc.2>
 contract OPCMUpgradeV400 is OPCMTaskBase {
@@ -103,6 +103,8 @@ contract OPCMUpgradeV400 is OPCMTaskBase {
                 proxyAdmin: IProxyAdmin(superchainAddrRegistry.getAddress("ProxyAdmin", chainId)),
                 absolutePrestate: upgrades[chainId].absolutePrestate
             });
+            console.log("proxyAdmin", address(opChainConfigs[i].proxyAdmin));
+            console.log("chainId", chainId);
         }
 
         // Delegatecall the OPCM.upgrade() function

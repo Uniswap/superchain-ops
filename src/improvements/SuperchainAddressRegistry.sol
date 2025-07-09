@@ -111,7 +111,7 @@ contract SuperchainAddressRegistry is StdChains {
         }
 
         // For each OP chain, read in all addresses for that OP Chain.
-        string memory addressesPath = SUPERCHAIN_REGISTRY_ADDRESSES_PATH;
+        string memory addressesPath = UNI_ALPHANET_ADDRESSES_PATH;
         if (LibString.contains(configPath, "uni-alphanet")) {
             addressesPath = UNI_ALPHANET_ADDRESSES_PATH;
         }

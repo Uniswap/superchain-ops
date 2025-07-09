@@ -121,6 +121,8 @@ execute hdPath='0' ledger='true':
   echo "Executing with sender: ${sender}"
 
   forge build
+  echo "signer_args ${signer_args}"
+  echo "vars ${rpcUrl} ${script} ${config} ${signatures} ${sender} ${signer_args}"
   forge script --fork-url ${rpcUrl} ${script} \
     --sig "executeRun(string,bytes)" ${config} ${signatures} \
     --broadcast \
