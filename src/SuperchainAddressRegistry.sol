@@ -302,7 +302,7 @@ contract SuperchainAddressRegistry is StdChains {
         // Some older chains don't have a DisputeGameFactory.
         address disputeGameFactoryProxy = getDisputeGameFactoryProxy(systemConfigProxy);
         if (disputeGameFactoryProxy != address(0)) {
-            _saveDisputeGameEntries(chain, disputeGameFactoryProxy);
+            _saveDisputeGameEntries(chain, disputeGameFactoryProxy, chainAddressesContent);
         } else {
             // Older chains have an L2OutputOracleProxy.
             address l2OutputOracleProxy = IFetcher(optimismPortalProxy).L2_ORACLE();
@@ -350,34 +350,73 @@ contract SuperchainAddressRegistry is StdChains {
     }
 
     /// @dev Saves all dispute game related registry entries.
-    function _saveDisputeGameEntries(ChainInfo memory chain, address disputeGameFactoryProxy) internal {
+    function _saveDisputeGameEntries(
+        ChainInfo memory chain,
+        address disputeGameFactoryProxy,
+        string memory chainAddressesContent
+    ) internal {
         saveAddress("DisputeGameFactoryProxy", chain, disputeGameFactoryProxy);
 
         address faultDisputeGame = getFaultDisputeGame(disputeGameFactoryProxy);
         if (faultDisputeGame != address(0)) {
             saveAddress("FaultDisputeGame", chain, faultDisputeGame);
-            saveAddress("PermissionlessWETH", chain, getDelayedWETHProxy(faultDisputeGame));
+            address permissionlessWETH = getDelayedWETHProxy(faultDisputeGame);
+            if (permissionlessWETH != address(0)) {
+                saveAddress("PermissionlessWETH", chain, permissionlessWETH);
+            }
         }
 
         address permissionedDisputeGame = getPermissionedDisputeGame(disputeGameFactoryProxy);
         saveAddress("PermissionedDisputeGame", chain, permissionedDisputeGame);
 
-        address challenger = IFetcher(permissionedDisputeGame).challenger();
-        saveAddress("Challenger", chain, challenger);
+        address challenger = getChallenger(permissionedDisputeGame);
+        if (challenger == address(0)) {
+            challenger = tryParseContractAddress(chainAddressesContent, chain.chainId, "Challenger");
+        }
+        if (challenger != address(0)) {
+            saveAddress("Challenger", chain, challenger);
+        }
 
         address anchorStateRegistryProxy = getAnchorStateRegistryProxy(permissionedDisputeGame);
-        saveAddress("AnchorStateRegistryProxy", chain, anchorStateRegistryProxy);
+        if (anchorStateRegistryProxy == address(0)) {
+            anchorStateRegistryProxy =
+                tryParseContractAddress(chainAddressesContent, chain.chainId, "AnchorStateRegistryProxy");
+        }
+        if (anchorStateRegistryProxy != address(0)) {
+            saveAddress("AnchorStateRegistryProxy", chain, anchorStateRegistryProxy);
+        }
 
-        saveAddress("PermissionedWETH", chain, getDelayedWETHProxy(permissionedDisputeGame));
+        address permissionedWETH = getDelayedWETHProxy(permissionedDisputeGame);
+        if (permissionedWETH == address(0)) {
+            permissionedWETH = tryParseContractAddress(chainAddressesContent, chain.chainId, "DelayedWETHProxy");
+        }
+        if (permissionedWETH != address(0)) {
+            saveAddress("PermissionedWETH", chain, permissionedWETH);
+        }
 
         address mips = getMips(permissionedDisputeGame);
-        saveAddress("MIPS", chain, mips);
+        if (mips == address(0)) {
+            mips = tryParseContractAddress(chainAddressesContent, chain.chainId, "MIPS");
+        }
+        if (mips != address(0)) {
+            saveAddress("MIPS", chain, mips);
 
-        address preimageOracle = IFetcher(mips).oracle();
-        saveAddress("PreimageOracle", chain, preimageOracle);
+            address preimageOracle = getPreimageOracle(mips);
+            if (preimageOracle == address(0)) {
+                preimageOracle = tryParseContractAddress(chainAddressesContent, chain.chainId, "PreimageOracle");
+            }
+            if (preimageOracle != address(0)) {
+                saveAddress("PreimageOracle", chain, preimageOracle);
+            }
+        }
 
-        address proposer = IFetcher(permissionedDisputeGame).proposer();
-        saveAddress("Proposer", chain, proposer);
+        address proposer = getProposer(permissionedDisputeGame);
+        if (proposer == address(0)) {
+            proposer = tryParseContractAddress(chainAddressesContent, chain.chainId, "Proposer");
+        }
+        if (proposer != address(0)) {
+            saveAddress("Proposer", chain, proposer);
+        }
     }
 
     /// @notice Saves all addresses for a given chain from the addresses.json file. This does not perform any onchain discovery.
@@ -400,6 +439,18 @@ contract SuperchainAddressRegistry is StdChains {
         return vm.parseJsonAddress(
             chainAddressesContent, string.concat("$.", vm.toString(chainId), ".", contractIdentifier)
         );
+    }
+
+    function tryParseContractAddress(
+        string memory chainAddressesContent,
+        uint256 chainId,
+        string memory contractIdentifier
+    ) internal view returns (address) {
+        string memory key = string.concat("$.", vm.toString(chainId), ".", contractIdentifier);
+        if (!vm.keyExistsJson(chainAddressesContent, key)) {
+            return address(0);
+        }
+        return vm.parseJsonAddress(chainAddressesContent, key);
     }
 
     function getGuardian(address portal) internal view returns (address) {
@@ -493,7 +544,11 @@ contract SuperchainAddressRegistry is StdChains {
     }
 
     function getAnchorStateRegistryProxy(address permissionedDisputeGame) internal view returns (address) {
-        return IFetcher(permissionedDisputeGame).anchorStateRegistry();
+        try IFetcher(permissionedDisputeGame).anchorStateRegistry() returns (address anchorStateRegistry) {
+            return anchorStateRegistry;
+        } catch {
+            return address(0);
+        }
     }
 
     function getDelayedWETHProxy(address disputeGame) internal view returns (address) {
@@ -503,7 +558,35 @@ contract SuperchainAddressRegistry is StdChains {
     }
 
     function getMips(address permissionedDisputeGame) internal view returns (address) {
-        return IFetcher(permissionedDisputeGame).vm();
+        try IFetcher(permissionedDisputeGame).vm() returns (address vm_) {
+            return vm_;
+        } catch {
+            return address(0);
+        }
+    }
+
+    function getChallenger(address permissionedDisputeGame) internal view returns (address) {
+        try IFetcher(permissionedDisputeGame).challenger() returns (address challenger) {
+            return challenger;
+        } catch {
+            return address(0);
+        }
+    }
+
+    function getProposer(address permissionedDisputeGame) internal view returns (address) {
+        try IFetcher(permissionedDisputeGame).proposer() returns (address proposer) {
+            return proposer;
+        } catch {
+            return address(0);
+        }
+    }
+
+    function getPreimageOracle(address mips) internal view returns (address) {
+        try IFetcher(mips).oracle() returns (address oracle) {
+            return oracle;
+        } catch {
+            return address(0);
+        }
     }
 
     function getBatchSubmitter(address systemConfigProxy) internal view returns (address) {
