@@ -14,8 +14,8 @@ the values printed to the terminal when you run the task.
 >
 > ### Safe (L1ProxyAdminOwner): `0xf66d0913Ee7f8518841Ae913853301Dd29b82298` - This safe is not nested.
 >
-> - Domain Hash: `0x2fedecce87979400ff00d5cec4c77da942d43ab3b9db4a5ffc51bb2ef498f30b`
-> - Message Hash: `0x56585becf1613478b43ba98abfcfa9df19abf62ebaa4a2cc127ab705b9d3135c`
+> - Domain Hash: `0x3fe636801465d1c181289f70f03d57edc6aa3fa94e8dd619705c296e2f7ad372`
+> - Message Hash: `0x9b5ba13cc9f193181536a52b933a58d59eee4013d48f1d8b49f834af245a95c2`
 
 ## Task Calldata
 
